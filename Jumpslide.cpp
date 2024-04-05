@@ -45,6 +45,24 @@ namespace nt
 	}
 }
 
+void PressShift()
+{
+	// Create a generic keyboard event structure
+	INPUT ip;
+	ip.type = INPUT_KEYBOARD;
+	ip.ki.wScan = 0x2A; // hardware scan code for key
+
+	// ip.ki.wVk = VkKeyScanA(' ');
+	ip.ki.dwFlags = KEYEVENTF_SCANCODE; // 0 for key press
+	SendInput(1, &ip, sizeof(INPUT));
+
+	nt::sleep(1);
+
+	// Release the "H" key
+	ip.ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE; // KEYEVENTF_KEYUP for key release
+	SendInput(1, &ip, sizeof(INPUT));
+
+}
 
 void PressSpace()
 {
@@ -92,17 +110,21 @@ void JumpSlide()
 		nt::sleep(1);
 		while (true)
 		{
-			if (GetAsyncKeyState(VK_XBUTTON1))
+			if (GetAsyncKeyState(VK_SPACE))
 			{
 				if (jumped == false)
 				{
-					PressSpace();
-					nt::sleep(5);
 					PressC();
+					nt::sleep(1);
+					PressSpace();
+					nt::sleep(300);
+					PressSpace();
+					nt::sleep(10);
+					PressShift();
 					jumped = true;
 				}
 			}
-			if ((GetAsyncKeyState(VK_XBUTTON1) & 0x8000) == 0)
+			if ((GetAsyncKeyState(VK_SPACE) & 0x8000) == 0)
 			{
 				jumped = false;
 			}
